@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    {% for post in posts %}
+        <li><i><a href="/"><img src="/static/base/img/1.jpg"></a></i>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p>{{ post.body|truncatechars:100 }}</p>
+            <div class="autor">
+                <span class="lm f_l"><a href="/">Ly&个人博客</a></span>
+                <span class="dtime f_l">{{ post.created_time }}</span>
+                <span class="viewnum f_l">浏览（<a href="/">{{ post.views }}</a>）</span>
+                <span class="pingl f_l">评论（<a href="/">{{ post.comment_set.count }}</a>）</span>
+                <span class="f_r"><a href="{{ post.get_absolute_url }}" class="more">阅读原文</a></span>
+            </div>
+        </li>
+    {% empty %}
+        <div class="no-post">暂时还没有发布的文章！</div>
+    {% endfor %}
+
+    <div class="pagelist">
+     <!-- 如果当前页还有上一页，显示一个上一页的按钮 -->
+        {% if posts.has_previous %}
+        <a class="allpage" href="?page={{ posts.previous_page_number }}">上一页</a>
+        {% endif %}
+         <!-- 显示当前页面信息 -->
+        <a class="allpage">第 {{ posts.number }} 页 / 共 {{ posts.paginator.num_pages }} 页</a>
+         <!-- 如果当前页还有下一页，显示一个下一页的按钮 -->
+        {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+{% endblock main %}

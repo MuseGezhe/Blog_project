@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+    <div class="infosbox" align="center" style="width:600px;height: 500px ">
+        <form method="post" action="{% url 'blog_project:register' %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="photo" value="{{ form.photo.value }}">
+
+            <div class="form-group">
+                <label style="line-height: 50px;">用户名:</label>
+                <input style="height: 20px" class="form-control" name="username" value="{{ form.username.value }}">
+            </div>
+
+            <div class="form-group">
+                <label style="line-height: 50px;">密码:</label>
+                <input  style="height: 20px" class="form-control" name="password" type="password">
+            </div>
+
+
+            <div class="form-group">
+                <label style="line-height: 50px;">电话:</label>
+                <input style="height: 20px" class="form-control" name="phone" value="{{ form.phone.value }}">
+            </div>
+
+             <div class="form-group">
+                    <label >头像:</label>
+                    <img id="preImg"
+                         src="{{ form.photo.value|default:'/static/users/default_photo.gif' }}"
+                         width="100px" height="120px"
+                         onclick="selectImage.click()" style="width: 100px; height: 100px;">
+            </div>
+
+            <div class="form-group">
+                <div  style="line-height: 50px;">
+                    <button class="btn btn-primary" style="width: 50px">注册</button>
+                    <a class="btn btn-link" href="{% url 'blog_project:login' %}">已注册用户，去登录</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <input type="file"
+           id="selectImage"
+           style="display: none;"
+           onchange="uploadImage(this.files[0])">
+{% endblock main %}
+{% block js %}
+<script>
+    function uploadImage(imgFile) {
+        alert("正在上传图片： "+imgFile.name);
+        var url = '/upload/';  //上传图片的路径(接口)
+        var fd = new FormData();  // 将上传的文件封装到FormData中
+        fd.append('u_img', imgFile);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);  //打开接口（连接）
+
+        // 设置请求监听(成功，或失败)
+        xhr.onload = function (ev) {
+            // 判断请求是否成功
+            if(xhr.status == 200 && xhr.readyState==4){
+                alert(xhr.responseText);  //打印响应的文本数据
+                // 将响应的json文本转成json对象
+                data = JSON.parse(xhr.responseText);
+
+                // 显示上传的图片
+                $('#preImg').attr('src', data.path);
+
+                //将上传图片的路径写入到注册表单中
+                $('input[name="photo"]').val(data.path);
+
+            }
+        }
+
+        // 发送数据
+        xhr.send(fd);
+
+
+    }
+</script>
+{% endblock %}

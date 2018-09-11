@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+    {% if key %}
+        <p>{{ key }}</p>
+    {% endif %}
+    {% for post in post_list %}
+        <li><i><a href="/"><img src="/static/base/img/1.jpg"></a></i>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p>{{ post.body|truncatechars:100 }}</p>
+            <div class="autor">
+                <span class="lm f_l"><a href="/">Ly&个人博客</a></span>
+                <span class="dtime f_l">2014-02-19</span>
+                <span class="viewnum f_l">浏览（<a href="/">{{ post.views }}</a>）</span>
+                <span class="pingl f_l">评论（<a href="/">{{ post.comment_set.count }}</a>）</span>
+                <span class="f_r"><a href="{{ post.get_absolute_url }}" class="more">阅读原文</a></span>
+            </div>
+        </li>
+    {% empty %}
+        <div class="no-post">暂时还没有发布的文章！</div>
+    {% endfor %}
+{% endblock %}

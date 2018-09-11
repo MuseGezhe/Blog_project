@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+    <div class="infosbox">
+        <div class="newsview">
+            <h3 class="news_title">{{ post.title }}</h3>
+            <div class="bloginfo">
+                <ul>
+                  <li class="author">作者：<a href="/">LY</a></li>
+                  <li class="lmname"><a href="/">{{ post.category.name }}</a></li>
+                  <li class="timer">时间：{{ post.created_time }}</li>
+                  <li class="view">{{ post.views }}人已阅读</li>
+                  <li class="comments-link">{{ post.comment_set.count }}人已评论</li>
+                </ul>
+              </div>
+
+            <div class="news_con">
+                    {{ post.body|safe }}
+            </div>
+        </div>
+
+        <div class="news_pl">
+            <h2>文章评论</h2>
+
+            <div id="login">
+                {% if login_user %}
+                    <form action="{% url 'comments:post_comment' post.pk %}" method="post">
+                        {% csrf_token %}
+
+                        <label>
+                            <textarea name="text"></textarea>
+                        </label>
+                        <br>
+
+                        <input type="submit" value="提交评论" class="btn btn-default">
+
+                    </form>
+                {% else %}
+                    <span>请登录后，在评论！</span><br>
+                    <button class="btn btn-primary" ><a href="{% url 'blog_project:login' %}">登录</a></button>
+                {% endif %}
+            </div>
+
+            <div class="comment-list-panel" >
+                <h3>评论列表，共 <span>{{ post.comment_set.count }}</span> 条评论</h3>
+                <div class="infosbox">
+                    {% for comment in comment_list %}
+                    <div class="autor">
+                        <span><img class="img-circle" src="{{ comment.reader.photo}}" style="border-radius: 50%; width: 50px;height: 50px"></span>
+                        <span class="comment_photo">{{ comment.reader.username }}</span>
+                        <span class="comment_data">{{ comment.created_time }}</span>
+                    </div>
+                    <div class="text">
+                        {{ comment.text|safe }}
+                    </div>
+                    {% empty %}
+                    快来抢沙发！python
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            'mode':'textareas',
+            'theme':'advanced',
+            'width':550,
+            'height':300
+        })
+    </script>
+{% endblock main %}
+
